@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="Ilustração do Elecrow CrowPanel 1.28 polegadas">
+  <rect width="320" height="180" fill="#f4f2ef"/>
+  <circle cx="160" cy="88" r="74" fill="#4a4a4a"/>
+  <circle cx="160" cy="88" r="60" fill="#0d0d0d"/>
+  <path d="M117 124 A54 54 0 1 1 203 124" fill="none" stroke="#3a3a3a" stroke-width="8" stroke-linecap="round"/>
+  <path d="M117 124 A54 54 0 0 1 178 37" fill="none" stroke="#FF5A1F" stroke-width="8" stroke-linecap="round"/>
+  <path d="M160 88 L184 60" stroke="#FF5A1F" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="160" cy="88" r="5" fill="#F2F2F2"/>
+  <text x="160" y="120" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#F2F2F2" text-anchor="middle">3500</text>
+  <text x="160" y="174" font-family="system-ui,sans-serif" font-size="12" fill="#666" text-anchor="middle">Elecrow CrowPanel 1.28&#8243; · 240×240</text>
+</svg>

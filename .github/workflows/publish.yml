@@ -1,0 +1,128 @@
+# Publica a página de entrada e o instalador web no GitHub Pages.
+#
+# Os binários NÃO são compilados aqui: chegam como anexos de uma release deste repositório,
+# criada a partir do repositório de desenvolvimento do firmware.
+# Este workflow só descarrega esses anexos, confere o SHA256SUMS, gera os manifests e publica.
+# Não precisa de nenhum segredo: usa só o GITHUB_TOKEN deste repositório.
+name: Publish
+
+on:
+  release:
+    types: [published, edited]
+  push:
+    branches: [main]
+    paths: ['static/**', 'manifests/**', '.github/workflows/publish.yml']
+  pull_request:
+    paths: ['static/**', 'manifests/**', '.github/workflows/publish.yml']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag da release a publicar (vazio = a mais recente)'
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Escolher a release
+        id: rel
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          EVENT_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          tag="${INPUT_TAG:-${EVENT_TAG:-}}"
+          if [ -z "$tag" ]; then
+            # Inclui pré-releases (todas as versões são beta por agora).
+            tag="$(gh release list --repo "$GITHUB_REPOSITORY" --limit 1 --json tagName --jq '.[0].tagName // ""')"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          echo "Release: ${tag:-nenhuma}"
+
+      - name: Descarregar e conferir os binários
+        if: steps.rel.outputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.rel.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p dl
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir dl \
+            --pattern '*.factory.bin' --pattern 'SHA256SUMS.txt'
+          cd dl
+          # Só confere as imagens descarregadas; os .ota.bin ficam na release.
+          grep '\.factory\.bin$' SHA256SUMS.txt | sha256sum -c -
+
+      - name: Montar o site
+        env:
+          VERSION: ${{ steps.rel.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p site
+          cp -r static/. site/
+          if [ -z "$VERSION" ]; then
+            echo "::warning::Ainda não há release: o site sai sem instalador ativo."
+            exit 0
+          fi
+          for m in manifests/*.json; do
+            board="$(basename "$m" .json)"
+            bin="dl/opengauge-$board-v$VERSION.factory.bin"
+            if [ ! -f "$bin" ]; then
+              echo "::warning::Sem imagem para $board na v$VERSION; placa fica sem manifest."
+              continue
+            fi
+            mkdir -p "site/install/$board"
+            cp "$bin" "site/install/$board/"
+            sed "s/__VERSION__/$VERSION/g" "$m" > "site/install/$board/manifest.json"
+            python3 -m json.tool "site/install/$board/manifest.json" > /dev/null
+          done
+          ls -R site/install
+
+      - name: Validar
+        run: |
+          set -euo pipefail
+          test -f site/index.html
+          test -f site/favicon.svg
+          for d in site/install/*/; do
+            [ -d "$d" ] || continue
+            test -f "$d/manifest.json"
+            python3 - "$d/manifest.json" <<'PY'
+          import json, os, sys
+          m = json.load(open(sys.argv[1]))
+          base = os.path.dirname(sys.argv[1])
+          for b in m["builds"]:
+              for p in b["parts"]:
+                  assert os.path.isfile(os.path.join(base, p["path"])), p["path"]
+          print("ok", sys.argv[1])
+          PY
+          done
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+  deploy:
+    # Publica só em releases e execuções manuais (como no ESPHome_AC).
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    needs: site
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

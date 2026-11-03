@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Open Gauge · Web installer</title>
+  <meta name="description" content="Open Gauge: wireless digital gauges for your car, built on ESP32. Install the bench demo firmware from your browser.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta property="og:title" content="Open Gauge">
+  <meta property="og:description" content="Wireless digital gauges for your car, built on ESP32. In development.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/skydoy/OpenGauge/main/docs/social-preview.png">
+  <meta name="theme-color" content="#111111">
+  <script>
+    (function () { var t = null; try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t; })();
+  </script>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <style>
+    :root { --bg:#f6f5f3; --card:#fff; --text:#111111; --muted:#5d5d5d; --line:#e4e1dc; --ink:#111111; --ink2:#2b2b2b; --accent:#FF5A1F; --link:#c4410f; --warn-bg:#fff4e8; --warn:#FF5A1F; --ok-bg:#f1f1f1; --ok:#111111; }
+    :root { color-scheme: light; }
+    html[data-theme=dark] { color-scheme: dark; --bg:#0c0c0c; --card:#181818; --text:#F2F2F2; --muted:#a8a8a8; --line:#2c2c2c; --link:#ff8a5c; --warn-bg:#2a1a10; --ok-bg:#202020; --ok:#F2F2F2; }
+    esp-web-install-button { --mdc-theme-primary:#FF5A1F; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--text); line-height:1.55; }
+    a { color:var(--link); }
+    html[data-lang=pt] .en, html[data-lang=en] .pt { display:none !important; }
+    [hidden] { display:none !important; }
+    header { background: radial-gradient(120% 140% at 85% 0%, #3a1a0c 0%, var(--ink2) 35%, var(--ink) 75%); color:#F2F2F2; padding:1.25rem 1rem 3.5rem; border-bottom:3px solid var(--accent); }
+    .wrap { max-width:52rem; margin:0 auto; padding:0 1rem; }
+    .top { display:flex; align-items:center; gap:.9rem; }
+    .top img { width:56px; height:56px; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.4); outline:2px solid #ffffff22; }
+    .top h1 { font-size:1.6rem; margin:0; line-height:1.1; letter-spacing:.02em; }
+    .top small { opacity:.85; font-size:.95rem; }
+    .lang { margin-left:auto; display:flex; gap:.25rem; }
+    .lang button, .theme { border:1px solid #ffffff55; background:transparent; color:#fff; border-radius:999px; padding:.25rem .7rem; cursor:pointer; font-weight:600; line-height:1.2; }
+    .lang button:hover, .theme:hover { background:#ffffff22; }
+    .lang button[aria-pressed=true] { background:var(--accent); border-color:var(--accent); color:#fff; }
+    html[data-theme=dark] .theme .sun, html:not([data-theme=dark]) .theme .moon { display:none; }
+    .pitch { font-size:1.15rem; margin:1rem 0 0; max-width:40rem; }
+    .chips { list-style:none; padding:0; margin:.8rem 0 0; display:flex; flex-wrap:wrap; gap:.45rem; }
+    .chips li { margin:0; font-size:.88rem; font-weight:600; border:1px solid #ffffff55; border-radius:999px; padding:.15rem .7rem; color:#F2F2F2; }
+    .chips li::before { content:"✓ "; color:var(--accent); }
+    .ack { display:flex; gap:.55rem; align-items:flex-start; text-align:left; max-width:36rem; margin:.4rem auto .8rem; font-size:.95rem; }
+    .ack input { accent-color:var(--accent); margin-top:.3rem; width:1.1rem; height:1.1rem; flex:none; }
+    .badge { display:inline-block; margin-top:.8rem; font-size:.85rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:#111; background:var(--accent); border-radius:999px; padding:.2rem .7rem; }
+    main { margin-top:-2.5rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:1.25rem 1.25rem 1rem; margin-bottom:1rem; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+    .card h2 { margin:0 0 .6rem; font-size:1.2rem; display:flex; align-items:center; gap:.6rem; }
+    .num { flex:none; width:2rem; height:2rem; border-radius:50%; display:inline-grid; place-items:center; color:#fff; font-size:1rem; background:var(--accent); }
+    .boards { display:grid; grid-template-columns:repeat(3, 1fr); gap:.8rem; }
+    .boards label { display:block; border:2px solid var(--line); border-radius:12px; padding:.6rem; cursor:pointer; transition:border-color .15s; }
+    .boards label:hover { border-color:var(--accent); }
+    .boards label:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+    .boards input { accent-color:var(--accent); }
+    .boards img { width:100%; height:auto; border-radius:8px; margin-top:.4rem; display:block; }
+    .boards .t { font-weight:700; font-size:1.02rem; }
+    .boards .d { color:var(--muted); font-size:.9rem; }
+    .install { text-align:center; padding:.5rem 0 .25rem; }
+    .btn { font:inherit; font-size:1.15rem; font-weight:700; color:#fff; border:0; border-radius:12px; padding:.85rem 2.2rem; cursor:pointer; background:var(--accent); box-shadow:0 4px 14px rgba(255,90,31,.35); }
+    .btn:hover { filter:brightness(1.06); }
+    .ver { color:var(--muted); font-size:.9rem; margin-top:.4rem; }
+    .note { border-radius:10px; padding:.6rem .85rem; margin:.7rem 0; }
+    .warn { background:var(--warn-bg); border-left:4px solid var(--warn); }
+    .ok { background:var(--ok-bg); border-left:4px solid var(--ok); }
+    ol, ul { padding-left:1.25rem; } li { margin:.25rem 0; }
+    code { background:color-mix(in srgb, var(--text) 8%, transparent); padding:.05rem .35rem; border-radius:5px; }
+    table { width:100%; border-collapse:collapse; font-size:.95rem; }
+    td, th { border-top:1px solid var(--line); padding:.45rem .3rem; vertical-align:top; text-align:left; }
+    td:first-child { font-weight:600; white-space:nowrap; padding-right:.8rem; }
+    details { border-top:1px solid var(--line); padding:.55rem 0; }
+    summary { cursor:pointer; font-weight:600; }
+    details p, details li { color:var(--muted); }
+    details p { margin:.4rem 0 0; }
+    footer { color:var(--muted); font-size:.88rem; padding:1rem 0 2.5rem; }
+    #nosupport, #norelease { display:none; }
+    @media (max-width: 44rem) { .boards { grid-template-columns:1fr; } .top h1 { font-size:1.3rem; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <img src="icon.png" alt="Open Gauge logo">
+      <div>
+        <h1>Open Gauge</h1>
+        <small><span class="pt">Instalador web</span><span class="en">Web installer</span></small>
+      </div>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-set="en">EN</button>
+        <button type="button" data-set="pt">PT</button>
+        <button type="button" class="theme" id="theme-toggle" aria-label="Toggle dark mode"><span class="moon" aria-hidden="true">☾</span><span class="sun" aria-hidden="true">☀</span></button>
+      </div>
+    </div>
+    <p class="pitch">
+      <span class="pt">Mostradores digitais sem fios para o carro. Um gateway ESP32 lê os dados da centralina pelo barramento CAN e envia-os para um ou mais ecrãs redondos.</span>
+      <span class="en">Wireless digital gauges for your car. An ESP32 gateway reads the ECU data from the CAN bus and sends it to one or more round displays.</span>
+    </p>
+    <span class="badge"><span class="pt">Imagens de demonstração · só bancada</span><span class="en">Demo images · bench only</span></span>
+    <ul class="chips">
+      <li><span class="en">CAN read-only</span><span class="pt">CAN só de leitura</span></li>
+      <li><span class="en">Signed data (ECDSA)</span><span class="pt">Dados assinados (ECDSA)</span></li>
+      <li><span class="en">No phone or internet needed</span><span class="pt">Sem telemóvel nem Internet</span></li>
+    </ul>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="nosupport" class="card note warn">
+    <span class="pt"><b>Este browser não consegue instalar.</b> Abra esta página no <b>Chrome</b> ou <b>Edge</b> num computador (não funciona no telemóvel, Safari nem Firefox).</span>
+    <span class="en"><b>This browser can't install.</b> Open this page in <b>Chrome</b> or <b>Edge</b> on a computer (phones, Safari and Firefox don't work).</span>
+  </div>
+
+  <section class="card note warn">
+    <p style="margin:.2rem 0">⚠️ <span class="en"><b>Demo images, in development, not tested on hardware.</b></span><span class="pt"><b>Imagens de demonstração, em desenvolvimento, sem teste em hardware.</b></span></p>
+    <ul style="margin:.3rem 0">
+      <li><span class="en">For the bench only. The gateway runs the <b>bench simulator</b>: it sends <b>simulated data</b> and does not read the car's CAN bus. <b>Do not install it in a car.</b></span><span class="pt">Só para bancada. O gateway corre o <b>simulador de bancada</b>: envia <b>dados simulados</b> e não lê o CAN do carro. <b>Não instale num carro.</b></span></li>
+      <li><span class="en">All demo images of a version share the same <b>test signing key</b>, which anyone can extract. It proves the data path works; it does not protect anything.</span><span class="pt">Todas as imagens de demonstração de uma versão partilham a mesma <b>chave de assinatura de teste</b>, que qualquer pessoa pode extrair. Serve para mostrar que a ligação funciona; não protege nada.</span></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">1</span><span class="pt">Qual é a placa?</span><span class="en">Which board?</span></h2>
+    <p class="pt">Para a demonstração precisa de um <b>gateway</b> e de pelo menos um <b>ecrã</b>. Instale primeiro o gateway e depois cada ecrã, todos da <b>mesma versão</b>.</p>
+    <p class="en">For the demo you need one <b>gateway</b> and at least one <b>display</b>. Install the gateway first, then each display, all from the <b>same version</b>.</p>
+    <form id="board-form" class="boards">
+      <label><input type="radio" name="device" value="install/gateway-esp32/manifest.json" data-board-id="gateway" checked>
+        <span class="t">Gateway</span>
+        <div class="d"><span class="pt">Placa ESP32 · envia os dados para os ecrãs</span><span class="en">ESP32 board · sends the data to the displays</span></div>
+        <img src="board-gateway.svg" alt="Illustration of an ESP32 board" loading="lazy"></label>
+      <label><input type="radio" name="device" value="install/display-m5dial/manifest.json" data-board-id="m5dial">
+        <span class="t">M5Stack M5 Dial</span>
+        <div class="d"><span class="pt">Ecrã redondo 240×240 · ESP32-S3 · placa piloto</span><span class="en">240×240 round display · ESP32-S3 · pilot board</span></div>
+        <img src="board-m5dial.svg" alt="Illustration of the M5Stack M5 Dial" loading="lazy"></label>
+      <label><input type="radio" name="device" value="install/display-crowpanel128/manifest.json" data-board-id="crowpanel">
+        <span class="t">CrowPanel 1.28″</span>
+        <div class="d"><span class="pt">Ecrã redondo 240×240 · ESP32-S3 · Elecrow</span><span class="en">240×240 round display · ESP32-S3 · Elecrow</span></div>
+        <img src="board-crowpanel128.svg" alt="Illustration of the Elecrow CrowPanel 1.28 inch" loading="lazy"></label>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">2</span><span class="pt">Instalar o firmware</span><span class="en">Install the firmware</span></h2>
+    <ol class="pt">
+      <li>Ligue a placa a este computador com um cabo USB <b>de dados</b>.</li>
+      <li>Carregue em <b>Instalar</b>, escolha a porta série e depois <b>Install</b>.</li>
+      <li>Repita para cada placa.</li>
+    </ol>
+    <ol class="en">
+      <li>Connect the board to this computer with a USB <b>data</b> cable.</li>
+      <li>Press <b>Install</b>, pick the serial port, then <b>Install</b>.</li>
+      <li>Repeat for each board.</li>
+    </ol>
+    <div id="norelease" class="note warn">
+      <span class="pt"><b>Ainda não há nenhuma versão publicada.</b> O instalador fica ativo quando sair a primeira.</span>
+      <span class="en"><b>No version has been published yet.</b> The installer turns on when the first one is out.</span>
+    </div>
+    <div class="install" id="install-box">
+      <label class="ack"><input type="checkbox" id="ack">
+        <span><span class="en">I understand these are bench demo images, not for a car,.</span><span class="pt">Percebo que são imagens de demonstração para bancada, não para um carro,.</span></span></label>
+      <esp-web-install-button hidden id="install" manifest="install/gateway-esp32/manifest.json">
+        <button slot="activate" class="btn"><span class="pt">⚡ Instalar</span><span class="en">⚡ Install</span></button>
+        <span slot="unsupported"><span class="pt">Use o Chrome ou Edge num computador.</span><span class="en">Use Chrome or Edge on a computer.</span></span>
+        <span slot="not-allowed"><span class="pt">A página tem de abrir em https.</span><span class="en">The page must be opened over https.</span></span>
+      </esp-web-install-button>
+      <div class="ver" id="ver"></div>
+    </div>
+    <p class="note ok">✅ <span class="pt"><b>Deve ver:</b> uma nova porta série na lista, depois uma barra de progresso e <i>Installation complete</i>.</span><span class="en"><b>You should see:</b> a new serial port in the list, then a progress bar and <i>Installation complete</i>.</span></p>
+    <details><summary><span class="pt">A placa não aparece na lista?</span><span class="en">Board not showing up?</span></summary>
+      <p class="pt">Experimente outro cabo USB: muitos só carregam. Placas ESP32 com chip USB-série precisam do driver desse chip:</p>
+      <p class="en">Try another USB cable: some cables only charge. ESP32 boards with a USB-serial chip need that chip's driver:</p>
+      <ul>
+        <li>CP210x: <a href="https://www.silabs.com/developer-tools/usb-to-uart-bridge-vcp-drivers">Silicon Labs VCP driver</a></li>
+        <li>CH340 / CH9102: <a href="https://www.wch-ic.com/downloads/category/30.html">WCH driver</a></li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">?</span><span class="pt">Problemas</span><span class="en">Troubleshooting</span></h2>
+    <details><summary><span class="pt">O ecrã não mostra dados do gateway</span><span class="en">The display shows no data from the gateway</span></summary>
+      <p class="en">The gateway and the displays only work together when they come from the <b>same version</b>: each version has its own test key. Install all of them from the same version.</p>
+      <p class="pt">O gateway e os ecrãs só se entendem se vierem da <b>mesma versão</b>: cada versão tem a sua chave de teste. Instale todos a partir da mesma versão.</p></details>
+    <details><summary><span class="en">Installing again fails or the board doesn't boot after reinstalling</span><span class="pt">Reinstalar falha ou a placa não arranca depois de reinstalar</span></summary>
+      <p class="en">Close any other program using the serial port (Arduino IDE, serial monitor) and try again. If it still fails, hold the board's <b>BOOT</b> button (if it has one) while plugging in the USB cable, then press <b>Install</b>. You can reinstall from this page at any time.</p>
+      <p class="pt">Feche outros programas que estejam a usar a porta série (Arduino IDE, monitor série) e tente de novo. Se continuar a falhar, mantenha carregado o botão <b>BOOT</b> da placa (se tiver) ao ligar o cabo USB e carregue em <b>Instalar</b>. Pode reinstalar por esta página sempre que quiser.</p></details>
+    <details><summary><span class="pt">O botão Instalar não aparece</span><span class="en">The Install button doesn't show</span></summary>
+      <p class="pt">Use o Chrome ou o Edge num computador, com a página aberta em <code>https://</code>.</p>
+      <p class="en">Use Chrome or Edge on a computer, with the page opened over <code>https://</code>.</p></details>
+    <p><a href="https://github.com/skydoy/OpenGauge/issues/new/choose"><span class="pt">Pedir ajuda</span><span class="en">Ask for help</span></a>
+      · <a href="https://github.com/skydoy/OpenGauge/releases"><span class="pt">Todas as versões</span><span class="en">All releases</span></a></p>
+  </section>
+
+  <section class="card">
+    <h2><span class="pt">Estado do projeto</span><span class="en">Project status</span></h2>
+    <table>
+      <tr><td>Gateway</td><td><span class="pt">Compila. Nesta imagem usa o simulador de bancada.</span><span class="en">Builds. This image uses the bench simulator.</span></td></tr>
+      <tr><td>M5 Dial</td><td><span class="pt">Compila. Sem teste em hardware.</span><span class="en">Builds. Not tested on hardware.</span></td></tr>
+      <tr><td>CrowPanel 1.28″</td><td><span class="pt">Compila. Sem teste em hardware.</span><span class="en">Builds. Not tested on hardware.</span></td></tr>
+      <tr><td>CAN</td><td><span class="en"><b>Read-only</b> (listen-only): the gateway never sends anything to the car's bus. In the demo image the simulator is on and CAN is not read.</span><span class="pt"><b>Só de leitura</b> (listen-only): o gateway nunca envia nada para o barramento do carro. Na imagem de demonstração o simulador está ligado e o CAN não é lido.</span></td></tr>
+      <tr><td><span class="en">Link</span><span class="pt">Ligação</span></td><td><span class="en">ESP-NOW with <b>signed data (ECDSA P-256)</b>; displays reject unsigned packets. The key in the demo images is a shared test key.</span><span class="pt">ESP-NOW com <b>dados assinados (ECDSA P-256)</b>; os ecrãs rejeitam pacotes sem assinatura válida. A chave das imagens de demonstração é de teste e partilhada.</span></td></tr>
+    </table>
+    <p class="en">The source code is not public yet. It will be published in this repository at the end of phase 3. Until then, the <a href="https://github.com/skydoy/OpenGauge/blob/main/SOURCE_OFFER.md">written source offer</a> covers the LGPL-2.1 parts.</p>
+    <p class="pt">O código-fonte ainda não é público. Vai ser publicado neste repositório no fim da fase 3. Até lá, a <a href="https://github.com/skydoy/OpenGauge/blob/main/SOURCE_OFFER.md">oferta escrita de código-fonte</a> cobre as partes LGPL-2.1.</p>
+  </section>
+
+  <footer>
+    <p><span class="pt">Instalador e logótipo:</span><span class="en">Installer and logo:</span>
+      <a href="https://github.com/skydoy/OpenGauge">skydoy/OpenGauge</a> ·
+      <a href="https://github.com/skydoy/OpenGauge/blob/main/LICENSE">PolyForm Noncommercial 1.0.0</a>
+      (<span class="pt">uso pessoal e não comercial</span><span class="en">personal and non-commercial use</span>) ·
+      <a href="https://github.com/skydoy/OpenGauge/blob/main/NOTICE.md"><span class="pt">componentes de terceiros</span><span class="en">third-party components</span></a> ·
+      <a href="https://github.com/skydoy/OpenGauge/tree/main/LICENSES"><span class="pt">licenças</span><span class="en">licenses</span></a> ·
+      <a href="https://github.com/skydoy/OpenGauge/blob/main/SOURCE_OFFER.md"><span class="pt">oferta de código-fonte (LGPL-2.1)</span><span class="en">source offer (LGPL-2.1)</span></a>.
+      <span class="pt">As imagens das placas são ilustrações.</span><span class="en">Board pictures are illustrations.</span></p>
+    <p><span class="pt">M5Stack e Elecrow são marcas dos respetivos donos. Projeto independente, sem ligação a estas marcas. Use por sua conta e risco.</span>
+      <span class="en">M5Stack and Elecrow are trademarks of their owners. Independent project, not affiliated with them. Use at your own risk.</span></p>
+    <p><span class="pt">Apoiar o projeto:</span><span class="en">Support the project:</span>
+      <a href="https://ko-fi.com/skydoy">Ko-fi</a> · <a href="https://buymeacoffee.com/skydoy">Buy Me a Coffee</a></p>
+  </footer>
+</main>
+
+<script>
+  const root = document.documentElement;
+  const button = document.getElementById('install');
+  const ver = document.getElementById('ver');
+  const cache = {};
+  async function showVersion() {
+    const url = button.getAttribute('manifest');
+    try {
+      if (!(url in cache)) {
+        const r = await fetch(url, { cache: 'no-cache' });
+        cache[url] = r.ok ? await r.json() : null;
+      }
+    } catch (e) { cache[url] = null; }
+    const m = cache[url];
+    document.getElementById('norelease').style.display = m ? 'none' : 'block';
+    document.getElementById('install-box').hidden = !m;
+    button.hidden = !(m && document.getElementById('ack').checked);
+    const pt = root.dataset.lang === 'pt';
+    ver.textContent = m ? (pt ? 'Versão ' : 'Version ') + m.version + ' · ' + m.name : '';
+  }
+  function setLang(l) {
+    root.dataset.lang = l; root.lang = l;
+    document.querySelectorAll('.lang button[data-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.set === l));
+    try { localStorage.setItem('lang', l); } catch (e) {}
+    showVersion();
+  }
+  function selectBoard() {
+    const board = document.querySelector('input[name="device"]:checked');
+    button.setAttribute('manifest', board.value);
+    showVersion();
+  }
+  document.querySelectorAll('.lang button[data-set]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.set)));
+  const tbtn = document.getElementById('theme-toggle');
+  function themeLabel() {
+    const dark = root.dataset.theme === 'dark', pt = root.dataset.lang === 'pt';
+    tbtn.setAttribute('aria-pressed', dark);
+    tbtn.setAttribute('aria-label', pt ? (dark ? 'Mudar para modo claro' : 'Mudar para modo escuro') : (dark ? 'Switch to light mode' : 'Switch to dark mode'));
+    tbtn.title = tbtn.getAttribute('aria-label');
+  }
+  tbtn.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+    themeLabel();
+  });
+  new MutationObserver(themeLabel).observe(root, { attributes: true, attributeFilter: ['data-lang'] });
+  themeLabel();
+  if (!('serial' in navigator)) document.getElementById('nosupport').style.display = 'block';
+  document.getElementById('board-form').addEventListener('change', selectBoard);
+  document.getElementById('ack').addEventListener('change', showVersion);
+  let saved = null; try { saved = localStorage.getItem('lang'); } catch (e) {}
+  selectBoard();
+  setLang(saved === 'pt' ? 'pt' : 'en');
+</script>
+</body>
+</html>

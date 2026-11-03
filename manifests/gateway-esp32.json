@@ -1,0 +1,13 @@
+{
+  "name": "Open Gauge · Gateway (ESP32)",
+  "version": "__VERSION__",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "opengauge-gateway-esp32-v__VERSION__.factory.bin", "offset": 0 }
+      ]
+    }
+  ]
+}

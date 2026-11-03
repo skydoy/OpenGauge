@@ -1,0 +1,13 @@
+{
+  "name": "Open Gauge · M5Stack M5 Dial",
+  "version": "__VERSION__",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "opengauge-display-m5dial-v__VERSION__.factory.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
