@@ -7,6 +7,7 @@ cada manifest para `install/<placa>/manifest.json`, ao lado da imagem `.factory.
 | Ficheiro | Placa | Chip | Imagem |
 |---|---|---|---|
 | `gateway-esp32.json` | Gateway (placa ESP32) | ESP32 | `opengauge-gateway-esp32-v<versão>.factory.bin` |
+| `gateway-t2canfd.json` | Gateway LILYGO T-2CAN-FD | ESP32-S3 | `opengauge-gateway-t2canfd-v<versão>.factory.bin` |
 | `display-m5dial.json` | M5Stack M5 Dial v1.1 | ESP32-S3 | `opengauge-display-m5dial-v<versão>.factory.bin` |
 | `display-crowpanel128.json` | Elecrow CrowPanel 1.28" | ESP32-S3 | `opengauge-display-crowpanel128-v<versão>.factory.bin` |
 

@@ -1,0 +1,13 @@
+{
+  "name": "Open Gauge · Gateway (LILYGO T-2CAN-FD)",
+  "version": "__VERSION__",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "opengauge-gateway-t2canfd-v__VERSION__.factory.bin", "offset": 0 }
+      ]
+    }
+  ]
+}

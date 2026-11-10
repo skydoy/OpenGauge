@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-lang="en">
+<html lang="en" data-lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -35,10 +35,12 @@
     .top img { width:56px; height:56px; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.4); outline:2px solid #ffffff22; }
     .top h1 { font-size:1.6rem; margin:0; line-height:1.1; letter-spacing:.02em; }
     .top small { opacity:.85; font-size:.95rem; }
-    .lang { margin-left:auto; display:flex; gap:.25rem; }
-    .lang button, .theme { border:1px solid #ffffff55; background:transparent; color:#fff; border-radius:999px; padding:.25rem .7rem; cursor:pointer; font-weight:600; line-height:1.2; }
+    .lang { margin-left:auto; flex:none; display:flex; gap:.25rem; }
+    .lang button { border:1px solid #ffffff55; background:transparent; color:#fff; border-radius:999px; padding:.25rem .7rem; cursor:pointer; font-weight:600; }
     .lang button:hover, .theme:hover { background:#ffffff22; }
     .lang button[aria-pressed=true] { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .lang .theme { display:inline-flex; align-items:center; justify-content:center; width:2.275rem; padding:0; line-height:1; border:1px solid #ffffff55; background:transparent; color:#fff; border-radius:999px; cursor:pointer; font-weight:600; }
+    .theme svg { display:block; width:14px; height:14px; flex:none; }
     html[data-theme=dark] .theme .sun, html:not([data-theme=dark]) .theme .moon { display:none; }
     .pitch { font-size:1.15rem; margin:1rem 0 0; max-width:40rem; }
     .chips { list-style:none; padding:0; margin:.8rem 0 0; display:flex; flex-wrap:wrap; gap:.45rem; }
@@ -51,14 +53,50 @@
     .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:1.25rem 1.25rem 1rem; margin-bottom:1rem; box-shadow:0 1px 3px rgba(0,0,0,.06); }
     .card h2 { margin:0 0 .6rem; font-size:1.2rem; display:flex; align-items:center; gap:.6rem; }
     .num { flex:none; width:2rem; height:2rem; border-radius:50%; display:inline-grid; place-items:center; color:#fff; font-size:1rem; background:var(--accent); }
-    .boards { display:grid; grid-template-columns:repeat(3, 1fr); gap:.8rem; }
-    .boards label { display:block; border:2px solid var(--line); border-radius:12px; padding:.6rem; cursor:pointer; transition:border-color .15s; }
-    .boards label:hover { border-color:var(--accent); }
-    .boards label:has(input:checked) { border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+    .boards { display:grid; grid-template-columns:repeat(2, 1fr); gap:.8rem; }
+    .boards.cols-2 { grid-template-columns:repeat(2, 1fr); }
+    .boards label, .boards .pick {
+      display:block; border:2px solid var(--line); border-radius:12px; padding:.6rem;
+      cursor:pointer; transition:border-color .15s, box-shadow .15s; background:transparent;
+      color:inherit; font:inherit; text-align:left; width:100%;
+    }
+    /* Hover/focus must NOT look selected: keep neutral border; only selected uses accent. */
+    .boards label:hover:not(:has(input:checked)),
+    .boards .pick:hover:not([aria-pressed=true]) {
+      border-color: color-mix(in srgb, var(--text) 22%, var(--line));
+    }
+    .boards label:focus-within:not(:has(input:checked)),
+    .boards .pick:focus-visible:not([aria-pressed=true]) {
+      outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+      outline-offset: 2px;
+      border-color: var(--line);
+    }
+    .boards label:has(input:checked), .boards .pick[aria-pressed=true] {
+      border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+      outline: none;
+    }
+    .boards label:has(input:checked):hover, .boards .pick[aria-pressed=true]:hover {
+      border-color:var(--accent);
+    }
+    .boards label.is-soon { opacity:.9; }
     .boards input { accent-color:var(--accent); }
     .boards img { width:100%; height:auto; border-radius:8px; margin-top:.4rem; display:block; }
-    .boards .t { font-weight:700; font-size:1.02rem; }
+    .boards .t { font-weight:700; font-size:1.02rem; display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; }
     .boards .d { color:var(--muted); font-size:.9rem; }
+    .boards .soon {
+      display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+      color:#fff; background:var(--accent); border-radius:999px; padding:.12rem .5rem;
+    }
+    .picker-back {
+      display:inline-flex; align-items:center; gap:.35rem; margin:0 0 .85rem;
+      border:1px solid var(--line); background:var(--card); color:var(--text);
+      border-radius:999px; padding:.35rem .85rem; cursor:pointer; font:inherit; font-weight:600;
+    }
+    .picker-back:hover { border-color:var(--accent); color:var(--accent); }
+    .picker-level[hidden] { display:none !important; }
+    .picker-crumb { color:var(--muted); font-size:.92rem; margin:0 0 .7rem; }
+    #coming-soon.note { margin-top:.7rem; }
+    #install-box.is-disabled .btn { opacity:.45; pointer-events:none; cursor:not-allowed; filter:none; box-shadow:none; }
     .install { text-align:center; padding:.5rem 0 .25rem; }
     .btn { font:inherit; font-size:1.15rem; font-weight:700; color:#fff; border:0; border-radius:12px; padding:.85rem 2.2rem; cursor:pointer; background:var(--accent); box-shadow:0 4px 14px rgba(255,90,31,.35); }
     .btn:hover { filter:brightness(1.06); }
@@ -77,7 +115,7 @@
     details p { margin:.4rem 0 0; }
     footer { color:var(--muted); font-size:.88rem; padding:1rem 0 2.5rem; }
     #nosupport, #norelease { display:none; }
-    @media (max-width: 44rem) { .boards { grid-template-columns:1fr; } .top h1 { font-size:1.3rem; } }
+    @media (max-width: 44rem) { .boards, .boards.cols-2 { grid-template-columns:1fr; } .top h1 { font-size:1.3rem; } }
   </style>
 </head>
 <body>
@@ -90,9 +128,9 @@
         <small><span class="pt">Instalador web</span><span class="en">Web installer</span></small>
       </div>
       <div class="lang" role="group" aria-label="Language">
-        <button type="button" data-set="en">EN</button>
-        <button type="button" data-set="pt">PT</button>
-        <button type="button" class="theme" id="theme-toggle" aria-label="Toggle dark mode"><span class="moon" aria-hidden="true">☾</span><span class="sun" aria-hidden="true">☀</span></button>
+        <button type="button" data-set="pt" aria-pressed="false">PT</button>
+        <button type="button" data-set="en" aria-pressed="true">EN</button>
+        <button type="button" class="theme" id="theme-toggle" aria-label="Mudar para modo escuro"><svg class="moon" aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="sun" aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6M4.8 4.8l1.8 1.8M17.4 17.4l1.8 1.8M4.8 19.2l1.8-1.8M17.4 6.6l1.8-1.8"/></svg></button>
       </div>
     </div>
     <p class="pitch">
@@ -122,38 +160,83 @@
     </ul>
   </section>
 
-  <section class="card">
+  <section class="card" id="step-board">
     <h2><span class="num">1</span><span class="pt">Qual é a placa?</span><span class="en">Which board?</span></h2>
-    <p class="pt">Para a demonstração precisa de um <b>gateway</b> e de pelo menos um <b>ecrã</b>. Instale primeiro o gateway e depois cada ecrã, todos da <b>mesma versão</b>.</p>
+    <p class="pt">Para a demonstração precisas de um <b>gateway</b> e de pelo menos um <b>ecrã</b>. Instala primeiro o gateway e depois cada ecrã, todos da <b>mesma versão</b>.</p>
     <p class="en">For the demo you need one <b>gateway</b> and at least one <b>display</b>. Install the gateway first, then each display, all from the <b>same version</b>.</p>
-    <form id="board-form" class="boards">
-      <label><input type="radio" name="device" value="install/gateway-esp32/manifest.json" data-board-id="gateway" checked>
-        <span class="t">Gateway</span>
-        <div class="d"><span class="pt">Placa ESP32 · envia os dados para os ecrãs</span><span class="en">ESP32 board · sends the data to the displays</span></div>
-        <img src="board-gateway.svg" alt="Illustration of an ESP32 board" loading="lazy"></label>
-      <label><input type="radio" name="device" value="install/display-m5dial/manifest.json" data-board-id="m5dial">
-        <span class="t">M5Stack M5 Dial</span>
-        <div class="d"><span class="pt">Ecrã redondo 240×240 · ESP32-S3 · placa piloto</span><span class="en">240×240 round display · ESP32-S3 · pilot board</span></div>
-        <img src="board-m5dial.svg" alt="Illustration of the M5Stack M5 Dial" loading="lazy"></label>
-      <label><input type="radio" name="device" value="install/display-crowpanel128/manifest.json" data-board-id="crowpanel">
-        <span class="t">CrowPanel 1.28″</span>
-        <div class="d"><span class="pt">Ecrã redondo 240×240 · ESP32-S3 · Elecrow</span><span class="en">240×240 round display · ESP32-S3 · Elecrow</span></div>
-        <img src="board-crowpanel128.svg" alt="Illustration of the Elecrow CrowPanel 1.28 inch" loading="lazy"></label>
-    </form>
+
+    <div id="picker-level-1" class="picker-level">
+      <p class="picker-crumb pt">Escolhe o tipo de placa</p>
+      <p class="picker-crumb en">Choose the board type</p>
+      <div class="boards cols-2" role="group" aria-label="Board type">
+        <button type="button" class="pick" data-kind="gateway" aria-pressed="false">
+          <span class="t">Gateway</span>
+          <div class="d"><span class="pt">Lê o CAN e envia os dados para os ecrãs</span><span class="en">Reads CAN and sends data to the displays</span></div>
+          <img src="board-gateway.svg" alt="" loading="lazy">
+        </button>
+        <button type="button" class="pick" data-kind="display" aria-pressed="false">
+          <span class="t"><span class="pt">Ecrã</span><span class="en">Display</span></span>
+          <div class="d"><span class="pt">Mostrador redondo que recebe os dados do gateway</span><span class="en">Round gauge that receives data from the gateway</span></div>
+          <img src="board-display.svg" alt="" loading="lazy">
+        </button>
+      </div>
+    </div>
+
+    <div id="picker-level-gateway" class="picker-level" hidden>
+      <button type="button" class="picker-back" data-back>
+        <span aria-hidden="true">←</span>
+        <span class="pt">Voltar · tipo de placa</span>
+        <span class="en">Back · board type</span>
+      </button>
+      <p class="picker-crumb"><span class="pt">Gateway · escolhe o modelo</span><span class="en">Gateway · choose the model</span></p>
+      <form id="board-form-gateway" class="boards cols-2">
+        <label class="is-soon" id="t2canfd-card"><input type="radio" name="device" id="t2canfd" value="" data-board-id="t2canfd" data-soon="1" data-ready-manifest="install/gateway-t2canfd/manifest.json">
+          <span class="t">LILYGO T-2CAN-FD <span class="soon" id="t2canfd-soon"><span class="pt">Em breve</span><span class="en">Coming soon</span></span></span>
+          <div class="d"><span class="pt">Gateway ESP32-S3 com dois CAN isolados · imagem ainda não publicada</span><span class="en">ESP32-S3 gateway with two isolated CAN buses · image not published yet</span></div>
+          <img src="board-t2canfd.svg" alt="Illustration of a T-2CAN-FD board" loading="lazy"></label>
+        <label><input type="radio" name="device" value="install/gateway-esp32/manifest.json" data-board-id="gateway-esp32">
+          <span class="t"><span class="pt">ESP32 genérico</span><span class="en">Generic ESP32</span></span>
+          <div class="d"><span class="pt">Placa ESP32 · envia os dados para os ecrãs</span><span class="en">ESP32 board · sends the data to the displays</span></div>
+          <img src="board-gateway.svg" alt="Illustration of an ESP32 board" loading="lazy"></label>
+      </form>
+    </div>
+
+    <div id="picker-level-display" class="picker-level" hidden>
+      <button type="button" class="picker-back" data-back>
+        <span aria-hidden="true">←</span>
+        <span class="pt">Voltar · tipo de placa</span>
+        <span class="en">Back · board type</span>
+      </button>
+      <p class="picker-crumb"><span class="pt">Ecrã · escolhe o modelo</span><span class="en">Display · choose the model</span></p>
+      <form id="board-form-display" class="boards cols-2">
+        <label><input type="radio" name="device" value="install/display-m5dial/manifest.json" data-board-id="m5dial">
+          <span class="t">M5Stack M5 Dial</span>
+          <div class="d"><span class="pt">Ecrã redondo 240×240 · ESP32-S3 · placa piloto</span><span class="en">240×240 round display · ESP32-S3 · pilot board</span></div>
+          <img src="board-m5dial.svg" alt="Illustration of the M5Stack M5 Dial" loading="lazy"></label>
+        <label><input type="radio" name="device" value="install/display-crowpanel128/manifest.json" data-board-id="crowpanel">
+          <span class="t">CrowPanel 1.28″</span>
+          <div class="d"><span class="pt">Ecrã redondo 240×240 · ESP32-S3 · Elecrow</span><span class="en">240×240 round display · ESP32-S3 · Elecrow</span></div>
+          <img src="board-crowpanel128.svg" alt="Illustration of the Elecrow CrowPanel 1.28 inch" loading="lazy"></label>
+      </form>
+    </div>
   </section>
 
   <section class="card">
     <h2><span class="num">2</span><span class="pt">Instalar o firmware</span><span class="en">Install the firmware</span></h2>
     <ol class="pt">
-      <li>Ligue a placa a este computador com um cabo USB <b>de dados</b>.</li>
-      <li>Carregue em <b>Instalar</b>, escolha a porta série e depois <b>Install</b>.</li>
-      <li>Repita para cada placa.</li>
+      <li>Liga a placa a este computador com um cabo USB <b>de dados</b>.</li>
+      <li>Carrega em <b>Instalar</b>, escolhe a porta série e depois <b>Install</b>.</li>
+      <li>Repete para cada placa.</li>
     </ol>
     <ol class="en">
       <li>Connect the board to this computer with a USB <b>data</b> cable.</li>
       <li>Press <b>Install</b>, pick the serial port, then <b>Install</b>.</li>
       <li>Repeat for each board.</li>
     </ol>
+    <div class="note warn" id="coming-soon" hidden>
+      <span class="pt"><b>Em breve.</b> Ainda não há imagem publicada para a LILYGO T-2CAN-FD. Escolhe o ESP32 genérico, ou volta atrás e escolhe um ecrã.</span>
+      <span class="en"><b>Coming soon.</b> No image has been published yet for the LILYGO T-2CAN-FD. Pick the generic ESP32, or go back and choose a display.</span>
+    </div>
     <div id="norelease" class="note warn">
       <span class="pt"><b>Ainda não há nenhuma versão publicada.</b> O instalador fica ativo quando sair a primeira.</span>
       <span class="en"><b>No version has been published yet.</b> The installer turns on when the first one is out.</span>
@@ -216,20 +299,45 @@
       <a href="https://github.com/skydoy/OpenGauge/tree/main/LICENSES"><span class="pt">licenças</span><span class="en">licenses</span></a> ·
       <a href="https://github.com/skydoy/OpenGauge/blob/main/SOURCE_OFFER.md"><span class="pt">oferta de código-fonte (LGPL-2.1)</span><span class="en">source offer (LGPL-2.1)</span></a>.
       <span class="pt">As imagens das placas são ilustrações.</span><span class="en">Board pictures are illustrations.</span></p>
-    <p><span class="pt">M5Stack e Elecrow são marcas dos respetivos donos. Projeto independente, sem ligação a estas marcas. Use por sua conta e risco.</span>
-      <span class="en">M5Stack and Elecrow are trademarks of their owners. Independent project, not affiliated with them. Use at your own risk.</span></p>
+    <p><span class="pt">M5Stack, Elecrow e LILYGO são marcas dos respetivos donos. Projeto independente, sem ligação a estas marcas. Use por sua conta e risco.</span>
+      <span class="en">M5Stack, Elecrow and LILYGO are trademarks of their owners. Independent project, not affiliated with them. Use at your own risk.</span></p>
     <p><span class="pt">Apoiar o projeto:</span><span class="en">Support the project:</span>
       <a href="https://ko-fi.com/skydoy">Ko-fi</a> · <a href="https://buymeacoffee.com/skydoy">Buy Me a Coffee</a></p>
   </footer>
 </main>
 
 <script>
+  // Flip to true when install/gateway-t2canfd/manifest.json is published (one-line enable).
+  const ENABLE_T2CANFD = false;
+
   const root = document.documentElement;
   const button = document.getElementById('install');
   const ver = document.getElementById('ver');
+  const installBox = document.getElementById('install-box');
+  const comingSoon = document.getElementById('coming-soon');
+  const norelease = document.getElementById('norelease');
+  const level1 = document.getElementById('picker-level-1');
+  const levelGateway = document.getElementById('picker-level-gateway');
+  const levelDisplay = document.getElementById('picker-level-display');
   const cache = {};
+
   async function showVersion() {
-    const url = button.getAttribute('manifest');
+    const selected = document.querySelector('.picker-level:not([hidden]) input[name="device"]:checked');
+    const soon = !!(selected && selected.dataset.soon === '1');
+    const url = selected && selected.value ? selected.value : '';
+
+    comingSoon.hidden = !soon;
+    if (soon || !url) {
+      norelease.style.display = 'none';
+      installBox.hidden = true;
+      installBox.classList.toggle('is-disabled', soon);
+      button.hidden = true;
+      button.removeAttribute('manifest');
+      ver.textContent = '';
+      return;
+    }
+
+    button.setAttribute('manifest', url);
     try {
       if (!(url in cache)) {
         const r = await fetch(url, { cache: 'no-cache' });
@@ -237,30 +345,45 @@
       }
     } catch (e) { cache[url] = null; }
     const m = cache[url];
-    document.getElementById('norelease').style.display = m ? 'none' : 'block';
-    document.getElementById('install-box').hidden = !m;
+    norelease.style.display = m ? 'none' : 'block';
+    installBox.hidden = !m;
+    installBox.classList.remove('is-disabled');
     button.hidden = !(m && document.getElementById('ack').checked);
     const pt = root.dataset.lang === 'pt';
     ver.textContent = m ? (pt ? 'Versão ' : 'Version ') + m.version + ' · ' + m.name : '';
   }
+
   function setLang(l) {
     root.dataset.lang = l; root.lang = l;
     document.querySelectorAll('.lang button[data-set]').forEach(b => b.setAttribute('aria-pressed', b.dataset.set === l));
     try { localStorage.setItem('lang', l); } catch (e) {}
     showVersion();
   }
-  function selectBoard() {
-    const board = document.querySelector('input[name="device"]:checked');
-    button.setAttribute('manifest', board.value);
+
+  function showLevel(kind) {
+    level1.hidden = kind !== null;
+    levelGateway.hidden = kind !== 'gateway';
+    levelDisplay.hidden = kind !== 'display';
+    document.querySelectorAll('#picker-level-1 .pick').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.kind === kind ? 'true' : 'false');
+    });
+    if (kind === null) {
+      document.querySelectorAll('input[name="device"]').forEach(r => { r.checked = false; });
+    }
     showVersion();
   }
+
   document.querySelectorAll('.lang button[data-set]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.set)));
   const tbtn = document.getElementById('theme-toggle');
   function themeLabel() {
-    const dark = root.dataset.theme === 'dark', pt = root.dataset.lang === 'pt';
-    tbtn.setAttribute('aria-pressed', dark);
-    tbtn.setAttribute('aria-label', pt ? (dark ? 'Mudar para modo claro' : 'Mudar para modo escuro') : (dark ? 'Switch to light mode' : 'Switch to dark mode'));
-    tbtn.title = tbtn.getAttribute('aria-label');
+    const dark = root.dataset.theme === 'dark';
+    const pt = root.dataset.lang === 'pt';
+    tbtn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    const label = pt
+      ? (dark ? 'Mudar para modo claro' : 'Mudar para modo escuro')
+      : (dark ? 'Switch to light mode' : 'Switch to dark mode');
+    tbtn.setAttribute('aria-label', label);
+    tbtn.title = label;
   }
   tbtn.addEventListener('click', () => {
     root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -270,10 +393,50 @@
   new MutationObserver(themeLabel).observe(root, { attributes: true, attributeFilter: ['data-lang'] });
   themeLabel();
   if (!('serial' in navigator)) document.getElementById('nosupport').style.display = 'block';
-  document.getElementById('board-form').addEventListener('change', selectBoard);
+
+  document.querySelectorAll('#picker-level-1 .pick').forEach(b => {
+    b.addEventListener('click', () => {
+      const kind = b.dataset.kind;
+      showLevel(kind);
+      const form = kind === 'gateway'
+        ? document.getElementById('board-form-gateway')
+        : document.getElementById('board-form-display');
+      const other = kind === 'gateway'
+        ? document.getElementById('board-form-display')
+        : document.getElementById('board-form-gateway');
+      other.querySelectorAll('input[name="device"]').forEach(r => { r.checked = false; });
+      // Prefer a ready board (not coming-soon)
+      const first = form.querySelector('input[name="device"]:not([data-soon="1"])')
+        || form.querySelector('input[name="device"]');
+      if (first) first.checked = true;
+      showVersion();
+    });
+  });
+  document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => showLevel(null)));
+  document.getElementById('board-form-gateway').addEventListener('change', showVersion);
+  document.getElementById('board-form-display').addEventListener('change', showVersion);
   document.getElementById('ack').addEventListener('change', showVersion);
+
+  function applyT2canfdEnable() {
+    const input = document.getElementById('t2canfd');
+    const card = document.getElementById('t2canfd-card');
+    const badge = document.getElementById('t2canfd-soon');
+    if (!input || !card) return;
+    if (ENABLE_T2CANFD) {
+      input.dataset.soon = '0';
+      input.value = input.dataset.readyManifest || 'install/gateway-t2canfd/manifest.json';
+      card.classList.remove('is-soon');
+      if (badge) badge.hidden = true;
+      const d = card.querySelector('.d');
+      if (d) {
+        d.innerHTML = '<span class="pt">Gateway LILYGO ESP32-S3 com dois CAN isolados</span><span class="en">LILYGO ESP32-S3 gateway with two isolated CAN buses</span>';
+      }
+    }
+  }
+
   let saved = null; try { saved = localStorage.getItem('lang'); } catch (e) {}
-  selectBoard();
+  applyT2canfdEnable();
+  showLevel(null);
   setLang(saved === 'pt' ? 'pt' : 'en');
 </script>
 </body>
