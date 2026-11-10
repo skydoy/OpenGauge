@@ -12,5 +12,6 @@ iguais às do firmware.
 - Manifest do gateway LILYGO T-2CAN-FD (`manifests/gateway-t2canfd.json` → `install/gateway-t2canfd/manifest.json`, ESP32-S3). Só fica ativo quando a release trouxer `opengauge-gateway-t2canfd-v<versão>.factory.bin`; sem teste em hardware. Substitui o manifest da T-CAN485 (decisão do Tiago de 2026-11-10).
 
 ### Alterado
+- LILYGO T-2CAN-FD ativa no instalador (`ENABLE_T2CANFD = true` em `static/index.html`): o cartão deixa de estar «em breve» e passa a usar `install/gateway-t2canfd/manifest.json`. Só funciona depois de uma release com `opengauge-gateway-t2canfd-v<versão>.factory.bin`; o gateway mantém o simulador de bancada ligado; sem teste em hardware (decisão do Tiago de 2026-11-10).
 - Passo 1 do instalador em dois níveis: primeiro Gateway ou Display, depois o modelo (LILYGO T-2CAN-FD ou ESP32 genérico; M5 Dial ou CrowPanel 1.28″), com botão para voltar. A T-2CAN-FD fica «em breve» até haver imagem publicada; substitui a T-CAN485 (decisão do Tiago de 2026-11-10).
 - Botão de tema (sol/lua) igual ao do hub ESPmaniacs: última pílula depois de PT | EN, do mesmo tamanho, com ícone SVG centrado; o botão ativo mantém o laranja do Open Gauge.
