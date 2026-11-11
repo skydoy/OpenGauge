@@ -1,4 +1,5 @@
-# Publica a página de entrada e o instalador web no GitHub Pages.
+# Publica a página de entrada, o instalador web e a documentação (docs-site/ → /docs/pt/ e /docs/en/)
+# no GitHub Pages.
 #
 # Os binários NÃO são compilados aqui: chegam como anexos de uma release deste repositório,
 # criada a partir do repositório de desenvolvimento do firmware.
@@ -11,9 +12,9 @@ on:
     types: [published, edited]
   push:
     branches: [main]
-    paths: ['static/**', 'manifests/**', '.github/workflows/publish.yml']
+    paths: ['static/**', 'manifests/**', 'docs/**', 'docs-site/**', '.github/workflows/publish.yml']
   pull_request:
-    paths: ['static/**', 'manifests/**', '.github/workflows/publish.yml']
+    paths: ['static/**', 'manifests/**', 'docs/**', 'docs-site/**', '.github/workflows/publish.yml']
   workflow_dispatch:
     inputs:
       tag:
@@ -89,11 +90,26 @@ jobs:
           done
           ls -R site/install
 
+      - name: Compilar a documentação
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/docs-venv"
+          "$RUNNER_TEMP/docs-venv/bin/pip" install --quiet -r docs-site/requirements-docs.txt
+          MKDOCS="$RUNNER_TEMP/docs-venv/bin/mkdocs" docs-site/build.sh
+          # Só acrescenta site/docs/: não toca na página de entrada nem em site/install/.
+          test ! -e site/docs
+          cp -r docs-site/site/docs site/docs
+
       - name: Validar
         run: |
           set -euo pipefail
           test -f site/index.html
           test -f site/favicon.svg
+          for f in docs/index.html docs/pt/index.html docs/en/index.html \
+                   docs/pt/search/search_index.json docs/en/search/search_index.json \
+                   docs/pt/assets/stylesheets/extra.css docs/en/assets/stylesheets/extra.css; do
+            test -f "site/$f"
+          done
           for d in site/install/*/; do
             [ -d "$d" ] || continue
             test -f "$d/manifest.json"

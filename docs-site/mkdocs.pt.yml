@@ -1,0 +1,41 @@
+INHERIT: mkdocs.base.yml
+site_name: Open Gauge
+site_description: Mostradores digitais sem fios para o carro, com ESP32 — documentação
+site_url: https://skydoy.github.io/OpenGauge/docs/pt/
+docs_dir: src/pt
+site_dir: site/docs/pt
+theme:
+  language: pt
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: custom/sun
+        name: Mudar para o modo escuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: custom/moon
+        name: Mudar para o modo claro
+nav:
+  - Início: index.md
+  - Primeiros passos: getting-started.md
+  - Instalar: install.md
+  - Como funciona: how-it-works.md
+  - Placas:
+      - boards/index.md
+      - LILYGO T-2CAN-FD: boards/t2canfd.md
+      - ESP32 genérico: boards/esp32.md
+      - M5Stack M5 Dial: boards/m5dial.md
+      - CrowPanel 1.28″: boards/crowpanel.md
+  - CAN e centralinas: can.md
+  - Imagens de demonstração: demo.md
+  - Versões e ficheiros: releases.md
+  - Problemas: troubleshooting.md
+  - FAQ: faq.md
+  - Segurança: security.md
+  - Licença e créditos: licence.md

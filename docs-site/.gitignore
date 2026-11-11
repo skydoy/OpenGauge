@@ -1,0 +1,4 @@
+# Gerado por build.sh
+.venv/
+site/
+src/*/assets/

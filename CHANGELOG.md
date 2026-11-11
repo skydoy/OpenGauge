@@ -9,6 +9,7 @@ iguais às do firmware.
 - Página de entrada e instalador web (ESP Web Tools) para o gateway, o M5 Dial e o CrowPanel 1.28″.
 - README em português e inglês, logótipo, ícones e imagem de partilha.
 - Workflow `publish.yml`: publica no GitHub Pages as imagens da release mais recente.
+- Documentação pública em PT e EN (MkDocs Material) em `docs-site/`, publicada em `/docs/pt/` e `/docs/en/`: primeiros passos, instalação, como funciona, placas, CAN e centralinas, imagens de demonstração, versões, problemas, FAQ, segurança e licença. Pesquisa, tema claro/escuro e PT | EN como no hub ESPmaniacs. O `publish.yml` compila-a com `mkdocs build --strict` e junta-a ao site sem mexer no instalador nem nos manifests.
 - Manifest do gateway LILYGO T-2CAN-FD (`manifests/gateway-t2canfd.json` → `install/gateway-t2canfd/manifest.json`, ESP32-S3). Só fica ativo quando a release trouxer `opengauge-gateway-t2canfd-v<versão>.factory.bin`; sem teste em hardware. Substitui o manifest da T-CAN485 (decisão do Tiago de 2026-11-10).
 
 ### Alterado

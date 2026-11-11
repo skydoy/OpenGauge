@@ -1,0 +1,6 @@
+{#-
+  Partilha o estado do Material (paleta) entre /docs/pt e /docs/en.
+  O scope por omissão é a raiz de cada língua, por isso o tema caía ao mudar PT | EN.
+  Um nível acima da raiz da língua é a raiz comum de /docs, na pré-visualização e no GitHub Pages.
+-#}
+<script>__md_scope=new URL("{{ config.extra.scope | d(base_url ~ "/../") }}",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>

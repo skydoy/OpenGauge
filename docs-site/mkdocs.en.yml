@@ -1,0 +1,41 @@
+INHERIT: mkdocs.base.yml
+site_name: Open Gauge
+site_description: Wireless digital gauges for your car, built on ESP32 — docs
+site_url: https://skydoy.github.io/OpenGauge/docs/en/
+docs_dir: src/en
+site_dir: site/docs/en
+theme:
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: custom/sun
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: custom/moon
+        name: Switch to light mode
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Install: install.md
+  - How it works: how-it-works.md
+  - Boards:
+      - boards/index.md
+      - LILYGO T-2CAN-FD: boards/t2canfd.md
+      - Generic ESP32: boards/esp32.md
+      - M5Stack M5 Dial: boards/m5dial.md
+      - CrowPanel 1.28″: boards/crowpanel.md
+  - CAN and ECUs: can.md
+  - Demo images: demo.md
+  - Releases and files: releases.md
+  - Troubleshooting: troubleshooting.md
+  - FAQ: faq.md
+  - Security: security.md
+  - Licence & credits: licence.md

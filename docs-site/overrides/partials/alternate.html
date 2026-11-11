@@ -1,0 +1,21 @@
+{# PT | EN pills — always PT then EN, matching the ESPmaniacs hub / installer.
+   Two separate builds (/docs/pt/ and /docs/en/) with the same file names, so the
+   other language's page is ../<lang>/<page.url> relative to this build's root. #}
+{% if config.extra.alternate %}
+  {% set current = config.theme.language %}
+  {% for code in ['pt', 'en'] %}
+    {% for alt in config.extra.alternate %}
+      {% if alt.lang == code %}
+        {% set home = '' if config.use_directory_urls else 'index.html' %}
+        {% set target = page.url if page and page.url and not page.is_homepage and page.url != '404.html' else home %}
+        <a class="lang-pill"
+           href="{{ (base_url ~ '/').replace('//', '/') }}../{{ alt.lang }}/{{ target }}"
+           hreflang="{{ alt.lang }}"
+           lang="{{ alt.lang }}"
+           title="{{ alt.name }}"
+           aria-pressed="{{ 'true' if alt.lang == current else 'false' }}"
+           {% if alt.lang == current %}aria-current="true"{% endif %}>{{ alt.lang | upper }}</a>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+{% endif %}
